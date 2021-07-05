@@ -86,7 +86,7 @@ int main()
 
 		shaderProgram.Activate(); // Tell OpenGL which Shader Program we want to use
 		vao1.Bind(); // Bind the VAO so OpenGL knows to use it
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window); // Swap the back buffer with the front buffer
 		glfwPollEvents(); // Take care of all GLFW events
