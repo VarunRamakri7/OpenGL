@@ -10,20 +10,32 @@
 // Vertices coordinates
 GLfloat vertices[] =
 {
+	// Square coordinates
+	-0.5f, -0.5f, 0.0f, // Lower left
+	0.5f, -0.5f, 0.0f, // Lower right
+	0.5f, 0.5f, 0.0f, // Upper right
+	-0.5f, 0.5f, 0.0f // Upper left
+
+	/* // Triangle coordinates
 	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
 	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
 	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
 	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
 	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
-	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Bottom center
+	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Bottom center*/
 };
 
 // Indices for vertices order
 GLuint indices[] =
 {
+	// Square indices
+	0, 1, 3,
+	3, 1, 2
+
+	/* // Triangle indices
 	0, 3, 5, // Lower left triangle
 	3, 2, 4, // Lower right triangle
-	5, 4, 1 // Upper triangle
+	5, 4, 1 // Upper triangle*/
 };
 
 int main()
@@ -31,7 +43,7 @@ int main()
 	// Initialize GLFW
 	glfwInit();
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Tell GLFW we are using OpenGL version 3
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Tell GLFW we are using OpenGL version 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Tell GLFW we are using the CORE profile
 
@@ -45,8 +57,8 @@ int main()
 		return -1;
 	}
 
-	glfwMakeContextCurrent(window); // Introduce the window into the current context
-	gladLoadGL(); //Load GLAD so it configures OpenGL
+	glfwMakeContextCurrent(window); // Introduce the window to current context
+	gladLoadGL(); //Load GLAD to configure OpenGL
 	glViewport(0, 0, 800, 800);
 
 	// Generates Shader object using shaders defualt.vert and default.frag
