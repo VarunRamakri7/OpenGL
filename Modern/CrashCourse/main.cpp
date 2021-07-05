@@ -50,7 +50,7 @@ int main()
 		-0.5f, -0.5f, 0.0f, // Lower left
 		0.5f, -0.5f, 0.0f, // Lower right
 		-0.5f, 0.5f, 0.0f, // Upper Left
-		0.5f, 0.5f, 0.0f, // Upper right
+		-0.5f, 0.5f, 0.0f, // Upper Left
 		0.5f, 0.5f, 0.0f, // Upper right
 		0.5f, -0.5f, 0.0f // Lower right
 	};
@@ -106,10 +106,10 @@ int main()
 
 	// Bind VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(equilateralVertices), equilateralVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(equilateralVertices), equilateralVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(rightAngleVertices), rightAngleVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(squareNormalVertices), squareNormalVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(squareLineLoopVertices), squareLineLoopVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(squareLineLoopVertices), squareLineLoopVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 
 	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
@@ -131,7 +131,7 @@ int main()
 
 		glUseProgram(shaderProgram); // Specify shader program to use
 		glBindVertexArray(VAO); // Bind VAO so that OpenGL knows to use it
-		glDrawArrays(GL_LINE_LOOP, 0, 4); // Draw shape
+		glDrawArrays(GL_TRIANGLES, 0, 3); // Draw shape
 		glfwSwapBuffers(window); // Swap buffers
 
 		glfwPollEvents(); // Process all GLFW events
