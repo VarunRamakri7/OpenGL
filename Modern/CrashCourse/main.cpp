@@ -79,6 +79,8 @@ int main()
 	vbo1.Unbind();
 	ebo1.Unbind();
 
+	GLuint unifID = glGetUniformLocation(shaderProgram.ID, "scale"); // Get scale uniform from vertex shader
+
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -86,6 +88,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT); // Clean the back buffer and assign the new color to it
 
 		shaderProgram.Activate(); // Tell OpenGL which Shader Program we want to use
+		glUniform1f(unifID, 0.5f); // Set scale uniform
 		vao1.Bind(); // Bind the VAO so OpenGL knows to use it
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
