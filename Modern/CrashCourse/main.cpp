@@ -28,41 +28,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Tell GLFW we are using only the core profile
-
-	// Vertices for Equilateral triangle
-	GLfloat equilateralVertices[] =
-	{
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left
-		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f // Upper
-	};
 	
-	// Vertices for right angle triangle
-	GLfloat rightAngleVertices[] =
-	{
-		-0.5f, -0.5f, 0.0f, // Lower left
-		-0.5f, 0.5f, 0.0f, // Upper
-		0.5f, -0.5f, 0.0f // Lower right
-	};
-
-	GLfloat squareNormalVertices[] =
-	{
-		-0.5f, -0.5f, 0.0f, // Lower left
-		0.5f, -0.5f, 0.0f, // Lower right
-		-0.5f, 0.5f, 0.0f, // Upper Left
-		-0.5f, 0.5f, 0.0f, // Upper Left
-		0.5f, 0.5f, 0.0f, // Upper right
-		0.5f, -0.5f, 0.0f // Lower right
-	};
-
-	GLfloat squareLineLoopVertices[] =
-	{
-		-0.5f, -0.5f, // Lower left
-		-0.5f, 0.5f, // Upper Left
-		0.5f, 0.5f, // Upper right
-		0.5f, -0.5f // Lower right
-	};
-
 	GLFWwindow* window = glfwCreateWindow(800, 800, "Main Window", NULL, NULL); // Create window
 	if (window == NULL) // Check if window creation failed
 	{
@@ -96,32 +62,88 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	GLuint VAO, VBO; // Create reference containers
+	/*// Vertices for Equilateral triangle
+	GLfloat equilateralVertices[] =
+	{
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left
+		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f // Upper
+	};
+
+	// Vertices for right angle triangle
+	GLfloat rightAngleVertices[] =
+	{
+		-0.5f, -0.5f, 0.0f, // Lower left
+		-0.5f, 0.5f, 0.0f, // Upper
+		0.5f, -0.5f, 0.0f // Lower right
+	};
+
+	GLfloat squareNormalVertices[] =
+	{
+		-0.5f, -0.5f, 0.0f, // Lower left
+		0.5f, -0.5f, 0.0f, // Lower right
+		-0.5f, 0.5f, 0.0f, // Upper Left
+		-0.5f, 0.5f, 0.0f, // Upper Left
+		0.5f, 0.5f, 0.0f, // Upper right
+		0.5f, -0.5f, 0.0f // Lower right
+	};
+
+	GLfloat squareLineLoopVertices[] =
+	{
+		-0.5f, -0.5f, // Lower left
+		-0.5f, 0.5f, // Upper Left
+		0.5f, 0.5f, // Upper right
+		0.5f, -0.5f // Lower right
+	};*/
+
+	// Vertices for triangles
+	GLfloat vertices[] =
+	{
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
+		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
+		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
+		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Inner down
+	};
+
+	// Indices for index buffer
+	GLuint indices[] =
+	{
+		0, 3, 5, // Lower left triangle
+		3, 2, 4, // Lower right triangle
+		5, 4, 1 // Upper triangle
+	};
+
+	GLuint VAO, VBO, EBO; // Create reference containers
 
 	// Generate VAO and VBO with 1 object each
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO); // Make VAO the current object by binding it
 
 	// Bind VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(equilateralVertices), equilateralVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(equilateralVertices), equilateralVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(rightAngleVertices), rightAngleVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(squareNormalVertices), squareNormalVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(squareLineLoopVertices), squareLineLoopVertices, GL_STATIC_DRAW); // Introduce vertices into VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Introduce vertices into VBO
 
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);	// Bind the EBO specifying it's a GL_ELEMENT_ARRAY_BUFFER
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // Introduce the indices into the EBO
+
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
+	//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
 	glEnableVertexAttribArray(0); // Enable the VA so that OpenGL knows to use it
 
-	// Bind VAO and VBO to 0 so that we don't accidentally modify them
+	// Bind VAO, VBO, and EBO to 0 so that we don't accidentally modify them
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	glClearColor(0.07f, 0.13f, 0.17, 0.1f); // Set background color
-	glClear(GL_COLOR_BUFFER_BIT);
-	glfwSwapBuffers(window); // Swap buffers
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -131,7 +153,8 @@ int main()
 
 		glUseProgram(shaderProgram); // Specify shader program to use
 		glBindVertexArray(VAO); // Bind VAO so that OpenGL knows to use it
-		glDrawArrays(GL_TRIANGLES, 0, 3); // Draw shape
+		//glDrawArrays(GL_TRIANGLES, 0, 3); // Draw shape
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window); // Swap buffers
 
 		glfwPollEvents(); // Process all GLFW events
@@ -140,6 +163,7 @@ int main()
 	// Delete all objects we've created
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	glfwDestroyWindow(window);
