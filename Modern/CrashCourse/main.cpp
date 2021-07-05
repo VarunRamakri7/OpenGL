@@ -50,7 +50,7 @@ int main()
 	glViewport(0, 0, 800, 800);
 
 	// Generates Shader object using shaders defualt.vert and default.frag
-	Shader shaderProgram("default.vert", "default.frag");
+	Shader shaderProgram("default.frag", "default.vert");
 
 	// Generates Vertex Array Object and binds it
 	VAO vao1;
