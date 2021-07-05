@@ -18,6 +18,8 @@ class Shader
 
 		void Activate();
 		void Delete();
+	private:
+		void compileErrors(unsigned int shader, const char* type); // Checks if the different Shaders have compiled properly
 };
 
 #endif
