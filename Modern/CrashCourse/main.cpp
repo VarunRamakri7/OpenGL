@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "shaderClass.h"
+#include "Libraries/include/stb/stb_image.h"
 #include "VBO.h"
 #include "VAO.h"
 #include "EBO.h"
@@ -10,32 +11,35 @@
 // Vertices coordinates
 GLfloat vertices[] =
 {
-	//               COORDINATES                  /     COLORS           //
+	 //     COORDINATES  /        COLORS      /  TexCoord	// 
+	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
+	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
+	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
+	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
+
+	 /* // Triangle vertices
+	 //               COORDINATES                  /     COLORS           //
 	-0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     1.0f, 0.0f,  0.0f, // Lower left corner
 	 0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.0f, 1.0f,  0.0f, // Lower right corner
 	 0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     0.0f, 0.0f,  1.0f, // Upper corner
 	-0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.5f, 0.5f, 0.0f, // Left mid
 	 0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.0f, 0.5f, 0.5f, // Right mid
-	 0.0f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.5f, 0.0f,  0.5f  // Bottom mid
+	 0.0f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.5f, 0.0f,  0.5f  // Bottom mid*/
 
-	/* // Square coordinates
-	-0.5f, -0.5f, 0.0f, // Lower left
-	0.5f, -0.5f, 0.0f, // Lower right
-	0.5f, 0.5f, 0.0f, // Upper right
-	-0.5f, 0.5f, 0.0f // Upper left */
 };
 
 // Indices for vertices order
 GLuint indices[] =
 {
-	// Triangle indices
+	/// Square indices
+	0, 2, 1, // Upper triangle
+	0, 3, 2 // Lower triangle
+
+	/*// Triangle indices
 	0, 3, 5, // Lower left triangle
 	3, 2, 4, // Lower right triangle
-	5, 4, 1 // Upper triangle
+	5, 4, 1 // Upper triangle*/
 
-	/*// Square indices
-	0, 1, 3,
-	3, 1, 2*/
 };
 
 int main()
@@ -71,8 +75,9 @@ int main()
 	VBO vbo1(vertices, sizeof(vertices)); // Generates Vertex Buffer Object and links it to vertices
 	EBO ebo1(indices, sizeof(indices));	// Generates Element Buffer Object and links it to indices
 
-	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void *)0); // Links VBO to VAO (layout == 0)
-	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float))); // Links VBO to VAO (layout == 1)
+	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void *)0); // Links VBO to VAO (layout == 0)
+	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float))); // Links VBO to VAO (layout == 1)
+	vao1.LinkAttrib(vbo1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float))); // Links VBO to VAO (layout == 2)
 
 	// Unbind all to prevent accidentally modifying them
 	vao1.Unbind();
@@ -80,6 +85,36 @@ int main()
 	ebo1.Unbind();
 
 	GLuint unifID = glGetUniformLocation(shaderProgram.ID, "scale"); // Get scale uniform from vertex shader
+
+	// Texture
+
+	// Load image using stb
+	int imgWidth;
+	int imgHeight;
+	int imgColCh;
+	unsigned char* bytes = stbi_load("pop_cat.png", &imgWidth, &imgHeight, &imgColCh, 0);
+
+	// Generate and Bind Textures
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	// Set Texture properties
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S , GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(bytes);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
+	shaderProgram.Activate();
+	glUniform1i(tex0Uni, 0);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -90,9 +125,10 @@ int main()
 		shaderProgram.Activate(); // Tell OpenGL which Shader Program we want to use
 
 		glUniform1f(unifID, 0.5f); // Set scale uniform
+		glBindTexture(GL_TEXTURE_2D, texture);
 
 		vao1.Bind(); // Bind the VAO so OpenGL knows to use it
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window); // Swap the back buffer with the front buffer
 		glfwPollEvents(); // Take care of all GLFW events
@@ -102,6 +138,7 @@ int main()
 	vao1.Delete();
 	vbo1.Delete();
 	ebo1.Delete();
+	glDeleteTextures(1, &texture);
 	shaderProgram.Delete();
 
 	glfwDestroyWindow(window);
