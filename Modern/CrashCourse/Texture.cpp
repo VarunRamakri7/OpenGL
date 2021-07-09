@@ -2,18 +2,16 @@
 
 Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
 {
-	// Assigns the type of the texture ot the texture object
-	type = texType;
+	type = texType; // Assigns the type of the texture ot the texture object
 
 	// Stores the width, height, and the number of color channels of the image
-	int widthImg, heightImg, numColCh;
-	// Flips the image so it appears right side up
-	stbi_set_flip_vertically_on_load(true);
-	// Reads the image from a file and stores it in bytes
-	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
+	int widthImg;
+	int heightImg;
+	int numColCh;
+	stbi_set_flip_vertically_on_load(true); // Flips the image so it appears right side up
+	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0); // Reads the image from a file and stores it in bytes
 
-	// Generates an OpenGL texture object
-	glGenTextures(1, &ID);
+	glGenTextures(1, &ID); // Generates an OpenGL texture object
 	// Assigns the texture to a Texture Unit
 	glActiveTexture(slot);
 	glBindTexture(texType, ID);
@@ -30,26 +28,19 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 	// float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
 	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
-	// Assigns the image to the OpenGL Texture object
-	glTexImage2D(texType, 0, GL_RGBA, widthImg, heightImg, 0, format, pixelType, bytes);
-	// Generates MipMaps
-	glGenerateMipmap(texType);
+	glTexImage2D(texType, 0, GL_RGBA, widthImg, heightImg, 0, format, pixelType, bytes); // Assigns the image to the OpenGL Texture object
+	glGenerateMipmap(texType); // Generates MipMaps
 
-	// Deletes the image data as it is already in the OpenGL Texture object
-	stbi_image_free(bytes);
+	stbi_image_free(bytes); // Deletes the image data as it is already in the OpenGL Texture object
 
-	// Unbinds the OpenGL Texture object so that it can't accidentally be modified
-	glBindTexture(texType, 0);
+	glBindTexture(texType, 0); // Unbinds the OpenGL Texture object so that it can't accidentally be modified
 }
 
 void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 {
-	// Gets the location of the uniform
-	GLuint texUni = glGetUniformLocation(shader.ID, uniform);
-	// Shader needs to be activated before changing the value of a uniform
-	shader.Activate();
-	// Sets the value of the uniform
-	glUniform1i(texUni, unit);
+	GLuint texUni = glGetUniformLocation(shader.ID, uniform); // Gets the location of the uniform
+	shader.Activate(); // Shader needs to be activated before changing the value of a uniform
+	glUniform1i(texUni, unit); // Sets the value of the uniform
 }
 
 void Texture::Bind()
