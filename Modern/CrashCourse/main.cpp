@@ -2,8 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Texture.h"
 #include "shaderClass.h"
-#include "Libraries/include/stb/stb_image.h"
 #include "VBO.h"
 #include "VAO.h"
 #include "EBO.h"
@@ -88,34 +88,9 @@ int main()
 
 	// Texture
 
-	// Load image using stb
-	int imgWidth;
-	int imgHeight;
-	int imgColCh;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* bytes = stbi_load("pop_cat.png", &imgWidth, &imgHeight, &imgColCh, 0);
-
-	// Generate and Bind Textures
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// Set Texture properties
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S , GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	stbi_image_free(bytes);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
-	shaderProgram.Activate();
-	glUniform1i(tex0Uni, 0);
+	// Texture
+	Texture popCat("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	popCat.texUnit(shaderProgram, "tex0", 0);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -126,7 +101,7 @@ int main()
 		shaderProgram.Activate(); // Tell OpenGL which Shader Program we want to use
 
 		glUniform1f(unifID, 0.5f); // Set scale uniform
-		glBindTexture(GL_TEXTURE_2D, texture);
+		popCat.Bind();
 
 		vao1.Bind(); // Bind the VAO so OpenGL knows to use it
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -139,7 +114,7 @@ int main()
 	vao1.Delete();
 	vbo1.Delete();
 	ebo1.Delete();
-	glDeleteTextures(1, &texture);
+	popCat.Delete();
 	shaderProgram.Delete();
 
 	glfwDestroyWindow(window);
