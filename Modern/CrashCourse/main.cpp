@@ -92,6 +92,7 @@ int main()
 	int imgWidth;
 	int imgHeight;
 	int imgColCh;
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char* bytes = stbi_load("pop_cat.png", &imgWidth, &imgHeight, &imgColCh, 0);
 
 	// Generate and Bind Textures
