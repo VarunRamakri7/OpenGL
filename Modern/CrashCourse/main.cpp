@@ -81,9 +81,6 @@ int main()
 
 	GLuint unifID = glGetUniformLocation(shaderProgram.ID, "scale"); // Get scale uniform from vertex shader
 
-	float lastTime = 0.0f; // Time of last tick
-	float scale = 0.0f; // Added scale for triangle
-
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -92,13 +89,7 @@ int main()
 
 		shaderProgram.Activate(); // Tell OpenGL which Shader Program we want to use
 
-		// Make triangle pulsate
-		if (glfwGetTime() - lastTime > 1.0f / 60.0f)
-		{
-			scale += 0.5f; // Update scale
-			lastTime = glfwGetTime(); // Update tick
-		}
-		glUniform1f(unifID, 0.1f * sin(scale)); // Set scale uniform
+		glUniform1f(unifID, 0.5f); // Set scale uniform
 
 		vao1.Bind(); // Bind the VAO so OpenGL knows to use it
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
