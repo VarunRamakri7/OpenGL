@@ -11,6 +11,7 @@
 // Vertices coordinates
 GLfloat vertices[] =
 {
+	// Square vertices
 	 //     COORDINATES  /        COLORS      /  TexCoord	// 
 	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
 	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
@@ -85,8 +86,6 @@ int main()
 	ebo1.Unbind();
 
 	GLuint unifID = glGetUniformLocation(shaderProgram.ID, "scale"); // Get scale uniform from vertex shader
-
-	// Texture
 
 	// Texture
 	Texture popCat("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
